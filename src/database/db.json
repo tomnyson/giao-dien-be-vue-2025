@@ -1,0 +1,40 @@
+{
+  "products": [
+    {
+      "id": "SKU-001",
+      "name": "Laptop ThinkPad X1",
+      "description": "Laptop mỏng nhẹ, hiệu năng cao dành cho doanh nhân.",
+      "price": 1200.00,
+      "category": "Electronics",
+      "stock": 50,
+      "imageUrl": "https://picsum.photos/200/300"
+    },
+    {
+      "id": "SKU-002",
+      "name": "Điện thoại Galaxy S25",
+      "description": "Điện thoại thông minh flagship với camera 108MP.",
+      "price": 999.99,
+      "category": "Electronics",
+      "stock": 120,
+      "imageUrl": "https://picsum.photos/200/300"
+    },
+    {
+      "id": "SKU-003",
+      "name": "Tai nghe không dây Pro",
+      "description": "Tai nghe chống ồn chủ động, âm thanh chất lượng cao.",
+      "price": 249.00,
+      "category": "Accessories",
+      "stock": 300,
+      "imageUrl": "https://picsum.photos/200/300"
+    },
+    {
+      "id": "SKU-004",
+      "name": "Bàn phím cơ K8",
+      "description": "Bàn phím cơ không dây, layout 80% với switch Brown.",
+      "price": 89.50,
+      "category": "Peripherals",
+      "stock": 150,
+      "imageUrl": "https://picsum.photos/200/300"
+    }
+  ]
+}

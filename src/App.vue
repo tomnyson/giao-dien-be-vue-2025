@@ -2,7 +2,7 @@
 import ProductItem from './components/ProductItem.vue'
 import Pricing from './components/Pricing.vue';
 import StateComponent from './components/StateComponent.vue';
-import Bai3 from './components/Bai3.vue';
+import Bai4 from './components/Bai4.vue';
 </script>
 
 <template>
@@ -13,8 +13,8 @@ import Bai3 from './components/Bai3.vue';
   </p> -->
   <div class="san-pham-noi-bat">
     <div class="container">
-      <StateComponent/>
-      <Bai3/>
+      <!-- <StateComponent/> -->
+      <Bai4/>
       <!-- <Pricing Loai="Free" Gia="10" SoLuongNguoiDung="10" DungLuong="2" HoTro="Email support" DangKy="Sign up for free"/> -->
       <div class="row">
         <!-- <ProductItem
