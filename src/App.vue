@@ -4,9 +4,9 @@ import Menu from './components/Menu.vue';
 
 <template>
   <Menu></Menu>
-  <div class="container">
+  <!-- <div class="container"> -->
     <router-view></router-view>
-  </div>
+  <!-- </div> -->
 
 </template>
 

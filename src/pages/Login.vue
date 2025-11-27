@@ -1,8 +1,9 @@
 <script setup>
 import { reactive, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 
+const router = useRouter()
 const user = reactive({
     username: "",
     password: ""
@@ -29,7 +30,10 @@ const handleSubmit = async () => {
             userAPI.value = response.data
             const ketqua = userAPI.value.filter(item => item.username == user.username && item.password == user.password)
             if (ketqua.length > 0) {
+                alert('login success')
                 localStorage.setItem('ketqua', JSON.stringify(user))
+                router.push('/')
+                return false
             }
         }
     }
