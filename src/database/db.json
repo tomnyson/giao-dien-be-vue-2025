@@ -36,5 +36,19 @@
       "stock": 150,
       "imageUrl": "https://picsum.photos/200/300"
     }
+  ],
+  "users": [
+    {
+      "id": "3123",
+      "role": "admin",
+      "username": "admin@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "3123",
+      "role": "user",
+      "username": "user@gmail.com",
+      "password": "123456"
+    }
   ]
 }

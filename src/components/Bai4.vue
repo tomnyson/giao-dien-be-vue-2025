@@ -69,6 +69,7 @@ const loadData = async () => {
 
 }
 
+
 const handleDelete = async (id) => {
     const isConfirm = confirm('are you sure delete id:' + id)
     if (isConfirm) {
@@ -225,7 +226,7 @@ const handleShowDetail = (id) => {
                         <input type="text" name="" id="name" v-model="detail.name">
                         <span>Description</span>
                         <input type="text" value=""
-                        id="description">
+                        id="description" v-model="detail.description">
                         <span>Price</span>
                         <input type="text" value="" id="price">
                         <span>Category</span>
