@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>SimpleCart - Đăng nhập</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0d6efd, #6610f2);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .auth-card {
+      background-color: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+      max-width: 440px;
+      width: 100%;
+    }
+    .auth-header {
+      text-align: center;
+      padding: 2.5rem 2rem 1.5rem;
+    }
+    .auth-body {
+      padding: 0 2rem 2.5rem;
+    }
+    .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .divider span {
+      padding: 0 1rem;
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-card mx-auto">
+      <!-- Header -->
+      <div class="auth-header">
+        <h1 class="h3 fw-bold mb-2">
+          <a href="index.html" class="text-decoration-none text-dark">SimpleCart</a>
+        </h1>
+        <p class="text-muted mb-0">Đăng nhập vào tài khoản của bạn</p>
+      </div>
+
+      <!-- Body -->
+      <div class="auth-body">
+        <form>
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control form-control-lg"
+              id="email"
+              placeholder="your@email.com"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Mật khẩu</label>
+            <input
+              type="password"
+              class="form-control form-control-lg"
+              id="password"
+              placeholder="Nhập mật khẩu"
+              required
+            />
+          </div>
+
+          <!-- Remember & Forgot -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="remember" />
+              <label class="form-check-label" for="remember">
+                Ghi nhớ đăng nhập
+              </label>
+            </div>
+            <a href="forgot-password.html" class="text-decoration-none small">Quên mật khẩu?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+            Đăng nhập
+          </button>
+
+          <!-- Divider -->
+          <div class="divider">
+            <span>hoặc</span>
+          </div>
+
+          <!-- Social Login -->
+          <button type="button" class="btn btn-outline-secondary btn-lg w-100 mb-3">
+            <svg width="18" height="18" viewBox="0 0 18 18" class="me-2">
+              <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+              <path fill="#34A853" d="M9.003 18c2.43 0 4.467-.806 5.956-2.18L12.05 13.56c-.806.54-1.836.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z"/>
+              <path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9.001c0 1.452.348 2.827.957 4.041l3.007-2.332z"/>
+              <path fill="#EA4335" d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.426 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z"/>
+            </svg>
+            Đăng nhập với Google
+          </button>
+
+          <!-- Register Link -->
+          <div class="text-center">
+            <span class="text-muted">Chưa có tài khoản? </span>
+            <a href="register.html" class="text-decoration-none fw-semibold">Đăng ký ngay</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Back to Home -->
+    <div class="text-center mt-4">
+      <a href="index.html" class="text-white text-decoration-none">
+        ← Quay lại trang chủ
+      </a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>

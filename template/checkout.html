@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<title>SimpleCart - Thanh toán</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    body {
+      background-color: #f5f7fa;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .progress-steps span {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background-color: rgba(13, 110, 253, 0.08);
+      color: #0d6efd;
+    }
+    .progress-steps span + span {
+      margin-left: 0.5rem;
+    }
+    .progress-steps .muted-step {
+      background-color: #e9ecef;
+      color: #6c757d;
+    }
+    .section-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">SimpleCart</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="detail.html">Sản phẩm</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="cart.html">Giỏ hàng</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="checkout.html">Thanh toán</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-outline-light btn-sm" href="cart.html">Quay lại giỏ hàng</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE TITLE -->
+  <header class="bg-white shadow-sm">
+    <div class="container py-4">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div>
+          <p class="text-uppercase text-muted small mb-1">Thanh toán an toàn</p>
+          <h1 class="h3 mb-0">Hoàn tất đơn hàng</h1>
+          <p class="mb-0 text-muted">Thông tin được lưu để lần sau mua nhanh hơn.</p>
+        </div>
+        <div class="progress-steps text-center text-lg-end">
+          <span>Giỏ hàng</span>
+          <span>Thanh toán</span>
+          <span class="muted-step">Hoàn tất</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CHECKOUT CONTENT -->
+  <main class="container my-5">
+    <div class="row g-4">
+      <!-- Left: Form -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <p class="section-title mb-2">Thông tin liên hệ</p>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Họ</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tên</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Số điện thoại</label>
+                <input type="tel" class="form-control" placeholder="+84..." />
+              </div>
+            </div>
+
+            <hr class="my-4" />
+            <p class="section-title mb-2">Địa chỉ giao hàng</p>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Địa chỉ</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tỉnh/Thành phố</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Mã bưu chính</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Quốc gia</label>
+                <select class="form-select" required>
+                  <option value="">Chọn...</option>
+                  <option>Việt Nam</option>
+                  <option>Hoa Kỳ</option>
+                  <option>Anh</option>
+                  <option>Khác</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="same-address" checked />
+                  <label class="form-check-label" for="same-address">
+                    Sử dụng địa chỉ này cho thanh toán
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <p class="section-title mb-2">Phương thức thanh toán</p>
+            <div class="row gy-3">
+              <div class="col-md-4">
+                <div class="form-check border rounded-3 p-3 h-100">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="zalopay"
+                    checked
+                  />
+                  <label class="form-check-label d-block" for="zalopay">
+                    ZaloPay
+                  </label>
+                  <small class="text-muted">Quét mã QR ZaloPay để thanh toán ngay.</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check border rounded-3 p-3 h-100">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="momo"
+                  />
+                  <label class="form-check-label d-block" for="momo">
+                    MoMo Pay
+                  </label>
+                  <small class="text-muted">Nhập mã đơn hoặc quét QR trên MoMo.</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check border rounded-3 p-3 h-100">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="vnpay"
+                  />
+                  <label class="form-check-label d-block" for="vnpay">
+                    VNPay
+                  </label>
+                  <small class="text-muted">Hỗ trợ chuyển khoản qua VNPay QR.</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-check border rounded-3 p-3 h-100">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="paymentMethod"
+                    id="cod"
+                  />
+                  <label class="form-check-label d-block" for="cod">
+                    Thanh toán khi nhận hàng
+                  </label>
+                  <small class="text-muted">Trả tiền mặt cho shipper khi giao.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info mt-3" role="alert">
+              Sau khi bấm "Đặt hàng", mã QR tương ứng sẽ hiển thị để bạn quét bằng ví điện tử. Giao dịch an toàn, xác nhận trong vòng 1 phút.
+            </div>
+
+            <div class="row g-3 mt-1">
+              <div class="col-12">
+                <label class="form-label">Ghi chú đơn hàng (tuỳ chọn)</label>
+                <textarea class="form-control" rows="3" placeholder="Ví dụ: giao giờ hành chính, mã thang máy..."></textarea>
+              </div>
+              <div class="col-12 mt-2">
+                <a href="cart.html" class="btn btn-outline-secondary me-2">
+                  ← Quay lại giỏ hàng
+                </a>
+                <button type="submit" class="btn btn-primary">
+                  Đặt hàng
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Order summary -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Tóm tắt đơn hàng</h2>
+
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Loa Bluetooth mini</strong>
+                  <p class="mb-0 small text-muted">SL 1 · Màu navy</p>
+                </div>
+                <span>1.590.000đ</span>
+              </li>
+              <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>Balo da weekender</strong>
+                  <p class="mb-0 small text-muted">SL 1 · Màu nâu</p>
+                </div>
+                <span>3.150.000đ</span>
+              </li>
+            </ul>
+
+            <div class="d-flex justify-content-between mb-2">
+              <span>Tạm tính</span>
+              <span>4.740.000đ</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Phí vận chuyển</span>
+              <span>Miễn phí</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Thuế</span>
+              <span>0đ</span>
+            </div>
+            <div class="input-group my-3">
+              <input type="text" class="form-control" placeholder="Nhập mã giảm giá" />
+              <button class="btn btn-outline-secondary" type="button">Áp dụng</button>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between fw-bold mb-0">
+              <span>Tổng cộng</span>
+              <span>4.740.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h2 class="h6">Cần hỗ trợ?</h2>
+            <p class="text-muted small mb-3">
+              Đội ngũ chăm sóc hoạt động 24/7 để giải đáp mọi thắc mắc giao hàng hoặc thanh toán.
+            </p>
+            <ul class="list-unstyled mb-0 small">
+              <li>• Chat trực tuyến bất kỳ lúc nào</li>
+              <li>• Email: support@simplecart.vn</li>
+              <li>• Hotline: 1900 123 456</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white text-center py-4">
+    <small>© 2025 SimpleCart Việt Nam. Giao diện thanh toán demo.</small>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+</body>
+</html>
