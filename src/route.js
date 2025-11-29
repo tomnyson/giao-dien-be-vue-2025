@@ -8,9 +8,13 @@ import Profile from './pages/Profile.vue'
 import pageNotFound from './pages/errors/404.vue'
 import pagePermissonError from './pages/errors/503.vue'
 import AdminPage from './pages/admin/admin.vue'
+import Products from './pages/Products.vue'
+import ProductDetail from './pages/ProductDetail.vue'
 
 const routes = [
     { path: '/', name: 'home', component: HomeView, meta: { isLogin: false } },
+    { path: '/products', name: 'products', component: Products, meta: { isLogin: false } },
+    { path: '/products/:id', name: 'detail', component: ProductDetail, meta: { isLogin: false } },
     { path: '/login', name: 'login', component: LoginScreen, meta: { isLogin: false } },
     { path: '/register', name: 'register', component: RegisterScreen, meta: { isLogin: false } },
     { path: '/forgot-password', meta: { isLogin: false }, name: 'forgot', component: ForgotPassword },
