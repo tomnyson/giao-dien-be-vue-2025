@@ -1,22 +1,24 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router';
+import { onMounted, reactive, ref, watchEffect } from 'vue'
+import { RouterLink, useRoute } from 'vue-router';
 import axios from 'axios';
 const user = reactive({
     username: "",
     password: ""
 })
+const cart = reactive({
+    id: "",
+    userId: "",
+    productsID: "",
+    quantity: ""
+})
 const route = useRoute();
 const productDetail = ref({})
-const { id } = route.params
+const productRelated = ref([])
 
 const API = import.meta.env.VITE_API_URL
 
-onMounted(() => {
-    loadProductDetail();
-    console.log("id", id)
-})
-const loadProductDetail = async () => {
+const loadProductDetail = async (id) => {
     try {
         const response = await axios.get(`${API}/products/${id}`)
         console.log("detail", response)
@@ -24,39 +26,70 @@ const loadProductDetail = async () => {
             console.log("detail", response.data)
             productDetail.value = response.data
         }
+    } catch (error) {
+        throw error
+    }
+}
+
+const loadProductRelative = async () => {
+    try {
+        const response = await axios.get(`${API}/products`)
+        if (response.status === 200) {
+            console.log("data", response.data)
+               console.log("category", productDetail)
+            productRelated.value = response.data.filter(item => item.category === productDetail.value.category )
+        }
 
     } catch (error) {
         throw error
 
     }
 }
+
+// onMounted(async()=> {
+//     const {id} = route.params
+//     if(!id) {
+//         return
+//     }
+//    await loadProductDetail(id)
+//    await loadProductRelative(id)
+// })
+
+watchEffect(async() => {
+     const {id} = route.params
+    if(!id) {
+        return
+    }
+   await loadProductDetail(id)
+   await loadProductRelative(id)
+})
+/** 
+ * thêm
+ * b1. lay id cua sp hien tai
+ * b2. lay id nguoi dung 
+ * b3. chuyen sang trang dang nhap
+ * b4. lay gia tri so luong neu so luong < 0 het hang
+ * b5. luu vao object /carts -> payload o tren
+ * 
+ */
+const addcarts = async (id) => {
+    const response = await axios.get(`${API}/carts/${id}`)
+    
+}
 </script>
 <template>
     <main class="container my-4">
         <div class="row g-4 align-items-start">
             <!-- LEFT: IMAGES -->
-            {{ JSON.stringify(productDetail) }}
             <div class="col-md-6">
                 <div class="card shadow-sm">
-                    <img id="mainImage" class="card-img-top product-main-img" alt="Wireless speaker" />
+                    <img id="mainImage" :src="productDetail.imageUrl" class="card-img-top product-main-img" alt="Wireless speaker" />
                     <div class="card-body">
                         <div class="row g-2">
                             <div class="col-3">
-                                <img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=900&q=60"
+                                <img :src="productDetail.imageUrl"
                                     class="img-fluid thumbnail-img active" alt="Speaker front"
                                     onclick="changeImage(this)" />
-                            </div>
-                            <div class="col-3">
-                                <img src="https://images.unsplash.com/photo-1538688423619-a81d3f23454b?auto=format&fit=crop&w=900&q=60"
-                                    class="img-fluid thumbnail-img" alt="Speaker side" onclick="changeImage(this)" />
-                            </div>
-                            <div class="col-3">
-                                <img src="https://images.unsplash.com/photo-1521747116042-5a810fda9664?auto=format&fit=crop&w=900&q=60"
-                                    class="img-fluid thumbnail-img" alt="Controls" onclick="changeImage(this)" />
-                            </div>
-                            <div class="col-3">
-                                <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=900&q=60"
-                                    class="img-fluid thumbnail-img" alt="Lifestyle" onclick="changeImage(this)" />
                             </div>
                         </div>
                     </div>
@@ -204,50 +237,14 @@ const loadProductDetail = async () => {
                 <a href="detail.html" class="btn btn-outline-secondary btn-sm">Xem cửa hàng</a>
             </div>
             <div class="row g-4">
-                <div class="col-md-3 col-6">
+                <div v-for="item in productRelated" :key="item.id" class="col-md-3 col-6">
                     <div class="card h-100 shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=60"
+                        <img :src="item.imageUrl"
                             class="card-img-top" alt="Soundbar" />
                         <div class="card-body">
-                            <h6 class="card-title">Soundbar mini</h6>
-                            <p class="mb-1 fw-bold">1.890.000đ</p>
-                            <a href="detail.html" class="btn btn-sm btn-outline-primary">Xem</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-6">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=60"
-                            class="card-img-top" alt="Headphones" />
-                        <div class="card-body">
-                            <h6 class="card-title">Tai nghe phòng thu</h6>
-                            <p class="mb-1 fw-bold">3.690.000đ</p>
-                            <a href="detail.html" class="btn btn-sm btn-outline-primary">Xem</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-6">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=600&q=60"
-                            class="card-img-top" alt="Smart display" />
-                        <div class="card-body">
-                            <h6 class="card-title">Màn hình thông minh</h6>
-                            <p class="mb-1 fw-bold">2.190.000đ</p>
-                            <a href="detail.html" class="btn btn-sm btn-outline-primary">Xem</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-6">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://images.unsplash.com/photo-1518110832641-472190f64c6f?auto=format&fit=crop&w=600&q=60"
-                            class="card-img-top" alt="Charging dock" />
-                        <div class="card-body">
-                            <h6 class="card-title">Đế sạc đa thiết bị</h6>
-                            <p class="mb-1 fw-bold">950.000đ</p>
-                            <a href="detail.html" class="btn btn-sm btn-outline-primary">Xem</a>
+                            <h6 class="card-title">{{ item.name }}</h6>
+                            <p class="mb-1 fw-bold">{{ item.price }}</p>
+                            <RouterLink :to="`/products/${item.id}`" class="btn btn-sm btn-outline-primary">Xem</RouterLink>
                         </div>
                     </div>
                 </div>
@@ -259,5 +256,9 @@ const loadProductDetail = async () => {
 <style scoped>
 .success {
     color: green;
+}
+.card-img-top {
+    height: 300px;
+    object-fit: cover;
 }
 </style>

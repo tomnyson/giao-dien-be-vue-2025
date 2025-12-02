@@ -162,8 +162,13 @@ const loadProduct = async () => {
 </template>
 
 <style scoped>
-.card-img-top {
+#mainImage {
   object-fit: cover;
-  height: 180px;
+  height: 200px !important;
+}
+.card-img, .card-img-bottom, .card-img-top {
+    width: 100%;
+    object-fit: cover;
+    height: 300px;
 }
 </style>
