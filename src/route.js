@@ -10,6 +10,7 @@ import pagePermissonError from './pages/errors/503.vue'
 import AdminPage from './pages/admin/admin.vue'
 import Products from './pages/Products.vue'
 import ProductDetail from './pages/ProductDetail.vue'
+import Cart from './pages/Cart.vue'
 
 const routes = [
     { path: '/', name: 'home', component: HomeView, meta: { isLogin: false } },
@@ -19,6 +20,7 @@ const routes = [
     { path: '/register', name: 'register', component: RegisterScreen, meta: { isLogin: false } },
     { path: '/forgot-password', meta: { isLogin: false }, name: 'forgot', component: ForgotPassword },
     { path: '/profile', meta: { isLogin: true }, name: 'profile', component: Profile },
+    { path: '/carts', meta: { isLogin: true }, name: 'cart', component: Cart },
     { path: '/admin', meta: { isLogin: true, isAdmin: true }, name: 'admin', component: AdminPage },
     { path: '/503', name: 'permissionDenied', component: pagePermissonError },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: pageNotFound },
