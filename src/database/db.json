@@ -4,7 +4,7 @@
       "id": "SKU-001",
       "name": "Laptop ThinkPad X1",
       "description": "Laptop mỏng nhẹ, hiệu năng cao dành cho doanh nhân.",
-      "price": 1200.00,
+      "price": 1200,
       "category": "Electronics",
       "stock": 50,
       "imageUrl": "https://picsum.photos/200/300"
@@ -22,7 +22,7 @@
       "id": "SKU-003",
       "name": "Tai nghe không dây Pro",
       "description": "Tai nghe chống ồn chủ động, âm thanh chất lượng cao.",
-      "price": 249.00,
+      "price": 249,
       "category": "Accessories",
       "stock": 300,
       "imageUrl": "https://picsum.photos/200/300"
@@ -31,7 +31,7 @@
       "id": "SKU-004",
       "name": "Bàn phím cơ K8",
       "description": "Bàn phím cơ không dây, layout 80% với switch Brown.",
-      "price": 89.50,
+      "price": 89.5,
       "category": "Peripherals",
       "stock": 150,
       "imageUrl": "https://picsum.photos/200/300"
@@ -58,16 +58,16 @@
       "productId": "SKU-002",
       "quantity": 4
     },
-     {
+    {
       "id": "2",
       "userId": "3123",
       "productId": "SKU-003",
       "quantity": 3
     },
-      {
-      "id": "2",
-      "userId": "3130",
-      "productId": "SKU-003",
+    {
+      "id": "327d",
+      "productId": "SKU-001",
+      "userId": "3123",
       "quantity": 3
     }
   ]

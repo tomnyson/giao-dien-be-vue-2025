@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watchEffect } from 'vue'
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 const user = reactive({
     username: "",
@@ -13,8 +13,10 @@ const cart = reactive({
     quantity: ""
 })
 const route = useRoute();
+const router =useRouter()
 const productDetail = ref({})
 const productRelated = ref([])
+const quanity = ref(1)
 
 const API = import.meta.env.VITE_API_URL
 
@@ -72,8 +74,41 @@ watchEffect(async() => {
  * b5. luu vao object /carts -> payload o tren
  * 
  */
-const addcarts = async (id) => {
-    const response = await axios.get(`${API}/carts/${id}`)
+const handleAddCart = async (id) => {
+    console.log(id)
+    const user = localStorage.getItem('ketqua')
+    if (!user) {
+       router.push('/login')
+    }
+    else{
+        const userObj = JSON.parse(user)
+        const payload = {
+            productId: id,
+            userId: userObj.id,
+            quantity: 1,
+        }
+        /**
+         * check ton tai san pham
+         */
+    console.log('id',id)
+       const response = await axios.get(`${API}/carts?userId=${userObj.id}&productId=${id}`)
+       if(response.status === 200) {
+        if(response.data.length>0) {
+            // cart product  exsit
+            const idCart = response.data[0].id
+            const responseUpdateCart = await axios.put(`${API}/carts/${idCart}`,{
+                ...response.data[0],
+                quantity: Number(quantity.value) + Number(response.data[0].quantity)
+            })
+            alert('update cart success')
+
+        } else {
+            const responseAddCart = await axios.post(`${API}/carts`,payload)
+            alert('add cart success')
+            // cart product not exist
+        }
+       } 
+    }
     
 }
 </script>
@@ -101,14 +136,11 @@ const addcarts = async (id) => {
                 <h1 class="h3 mb-2">{{ productDetail.name }}</h1>
                 <p class="text-muted mb-1">{{ productDetail.id }}</p>
                 <div class="d-flex align-items-center mb-3">
-                    <span class="text-warning me-2">★★★★★</span>
-                    <small class="text-muted">42 đánh giá</small>
+                    quantity: (<strong>{{ productDetail.stock }}</strong>   )
                 </div>
 
                 <div class="mb-3">
                     <span class="h2 text-primary">{{ productDetail.price }}</span>
-                    <span class="text-muted text-decoration-line-through ms-2">1.890.000đ</span>
-                    <span class="badge text-bg-success ms-2">Còn hàng</span>
                 </div>
 
                 <p>
@@ -131,20 +163,18 @@ const addcarts = async (id) => {
         </div> -->
 
                 <!-- Quantity + Add to cart -->
-                <form class="mt-4">
+                <form class="mt-4" @submit.prevent="handleAddCart(productDetail.id)">
                     <div class="row g-3 align-items-center mb-3">
                         <div class="col-auto">
                             <label for="quantity" class="col-form-label fw-semibold">Quantity</label>
                         </div>
                         <div class="col-auto">
-                            <input type="number" id="quantity" class="form-control" value="1" min="1" />
+                            <input type="number" id="quantity" class="form-control" v-model="quanity" min="1" :max="productDetail.stock" />
                         </div>
                     </div>
 
                     <div class="d-flex flex-wrap gap-2">
-                        <a href="cart.html" class="btn btn-primary btn-lg">
-                            Thêm vào giỏ
-                        </a>
+                        <input type="submit" value=" Thêm vào giỏ"  class="btn btn-primary btn-lg"/>
                         <a href="checkout.html" class="btn btn-outline-secondary btn-lg">
                             Mua ngay
                         </a>

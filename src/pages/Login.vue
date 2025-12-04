@@ -31,7 +31,7 @@ const handleSubmit = async () => {
             const ketqua = userAPI.value.filter(item => item.username == user.username && item.password == user.password)
             if (ketqua.length > 0) {
                 alert('login success')
-                localStorage.setItem('ketqua', JSON.stringify(user))
+                localStorage.setItem('ketqua', JSON.stringify(ketqua[0]))
                 router.push('/')
                 return false
             }

@@ -12,7 +12,7 @@ const toggleNav = () => {
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container">
-      <RouterLink class="navbar-brand fw-bold" to="/">Shopping Cart</RouterLink>
+      <RouterLink class="navbar-brand fw-bold" to="/">VUEJS</RouterLink>
 
       <button
         class="navbar-toggler"
