@@ -11,30 +11,21 @@ onMounted(async () => {
   await getcart()
 })
 const getcart = async () => {
-    /**
-     * b1. kt tài khoản mk
-     * b1.1 -> call API get thông tin trả về -> lấy hết và xử lý js 
-     
-     * b1.2 => check xem có dữ liệu username và password trùng với array trả vể
-     * b1.3 => lưu vào local storage
-     * b1.4 => truyền về trang home
-     */
     try {
         const user = localStorage.getItem('ketqua')
         if (!user) {
-       router.push('/login')
+            router.push('/login')
+            return
         }
-        else{
-            const userObj = JSON.parse(user);
-            userid = userObj.id;
-            }
-        const listcart = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
-        if (listcart)
-        {
 
-            cart.value = listcart.data;
-            // console.log(listcart.data);
+        const userObj = JSON.parse(user);
+        userid = userObj.id;
 
+        const response = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
+        if (response.data?.length) {
+            cart.value = response.data;
+        } else {
+            cart.value = [];
         }
     }
     catch (error) {
@@ -75,14 +66,18 @@ const getcart = async () => {
                                                     class="cart-product-img me-3" alt="Wireless speaker" />
                                                 <div>
                                                     <a href="detail.html" class="fw-semibold text-decoration-none">
-                                                        {{ c.product.name }}</a>
+                                                        {{ c.product?.name }}</a>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-center">{{ c.product.price }}</td>
+                                        <td class="text-center">{{ c.product?.price }}</td>
                                         <td class="text-center" style="max-width: 110px;">
-                                            <input type="number" class="form-control form-control-sm text-center"
-                                                value={{ c.quantity }} min="1" />
+                                            <input
+                                                type="number"
+                                                class="form-control form-control-sm text-center"
+                                                :value="c.quantity"
+                                                min="1"
+                                            />
                                         </td>
                                         <td class="text-end">
                                             <button class="btn btn-sm btn-outline-danger">

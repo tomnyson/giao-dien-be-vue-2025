@@ -1,8 +1,8 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, inject } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
-
+const share = inject('share')
 const router = useRouter()
 const user = reactive({
     username: "",
@@ -32,6 +32,9 @@ const handleSubmit = async () => {
             if (ketqua.length > 0) {
                 alert('login success')
                 localStorage.setItem('ketqua', JSON.stringify(ketqua[0]))
+                if (share) {
+                    Object.assign(share, ketqua[0])
+                }
                 router.push('/')
                 return false
             }
