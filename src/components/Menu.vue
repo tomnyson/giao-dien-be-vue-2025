@@ -44,6 +44,9 @@ console.log(share.user)
           <li class="nav-item">
             <RouterLink class="nav-link" to="/">Products</RouterLink>
           </li>
+           <li class="nav-item">
+            <RouterLink class="nav-link" to="/carts">Carts</RouterLink>
+          </li>
            <li class="nav-item ms-lg-2" v-if="share.username && share.username != ''">
               Hi: {{ share.username }}
           </li>

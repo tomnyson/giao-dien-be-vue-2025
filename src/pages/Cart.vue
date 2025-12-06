@@ -1,12 +1,13 @@
 <script setup>
-import { reactive, ref , onMounted} from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref , onMounted, inject} from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const API = import.meta.env.VITE_API_URL
 let userid = 0;
 const cart = ref([])
+const share = inject('share')
 onMounted(async () => {
   await getcart()
 })
@@ -24,6 +25,7 @@ const getcart = async () => {
         const response = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
         if (response.data?.length) {
             cart.value = response.data;
+            share.carts = response.data;
         } else {
             cart.value = [];
         }
@@ -119,9 +121,9 @@ const getcart = async () => {
                             <span>4.740.000đ</span>
                         </div>
 
-                        <a href="checkout.html" class="btn btn-primary w-100 mb-2">
+                        <RouterLink to="/checkout" class="btn btn-primary w-100 mb-2">
                             Tiến hành thanh toán
-                        </a>
+                        </RouterLink>
                         <p class="small text-muted mb-0">
                             Khi đặt hàng bạn đã đồng ý với Điều khoản &amp; Chính sách của SimpleCart.
                         </p>
