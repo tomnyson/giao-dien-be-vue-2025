@@ -1,250 +1,161 @@
 <script setup>
-import { reactive, ref , onMounted, inject, computed} from 'vue'
+import { reactive, ref, onMounted, inject, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const share = inject('share')
-console.log('share', share)
 const API = import.meta.env.VITE_API_URL
-let userid = 0;
+
+let userid = 0
 const cart = ref([])
+
+const orderForm = reactive({
+  name: '',
+  email: '',
+  phone: '',
+  address: '',
+  note: '',
+  payment: 'cod',
+  couponCode: ''
+})
+
 onMounted(async () => {
-  await getcart()
+  await getCart()
 })
 
-const totalCart = computed(()=> {
-  return share.carts.reduce((accumulator, currentValue) => accumulator + currentValue.quantity*currentValue.product.price, 0)
+watchEffect(() => {
+  console.log('orderForm', orderForm)
 })
-const getcart = async () => {
-    try {
-        const user = localStorage.getItem('ketqua')
-        if (!user) {
-            router.push('/login')
-            return
-        }
 
-        const userObj = JSON.parse(user);
-        userid = userObj.id;
+const totalCart = computed(() => {
+  const carts = share?.carts && Array.isArray(share.carts) ? share.carts : cart.value
+  if (!carts) return 0
+  return carts.reduce((sum, item) => {
+    const price = item.product?.price ?? item.price ?? 0
+    return sum + Number(item.quantity || 0) * Number(price)
+  }, 0)
+})
 
-        const response = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
-        if (response.data?.length) {
-            cart.value = response.data;
-        } else {
-            cart.value = [];
-        }
+const getCart = async () => {
+  try {
+    const user = localStorage.getItem('ketqua')
+    if (!user) {
+      router.push('/login')
+      return
     }
-    catch (error) {
-        // console.log(error)
-        throw error
+
+    const userObj = JSON.parse(user)
+    userid = userObj.id
+
+    const response = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
+    const carts = response.data || []
+    cart.value = carts
+
+    if (share && typeof share === 'object') {
+      // ghi đè danh sách giỏ hàng dùng chung
+      share.carts = carts
     }
-    return false
+  } catch (error) {
+    console.error('getCart error', error)
+    throw error
+  }
 }
-/**
- * order
- * b1. lay thong khach tu form
- * b2. lay thong tin san pham -> carts
- * b3. tinh phi ship + vat + coupon (option)
- * b4 -> luu hoa don
- * b5 lay id hoa don => luu chi tiet hoa don
- * 
- */
 
+const handleSubmit = async () => {
+  try {
+    // b1. Lấy thông tin khách từ form (validate cơ bản)
+    if (!orderForm.name || !orderForm.phone || !orderForm.address) {
+      alert('Vui lòng nhập đầy đủ họ tên, SĐT và địa chỉ')
+      return
+    }
+
+    // Lấy user từ localStorage (phòng khi share chưa có id)
+    const userStr = localStorage.getItem('ketqua')
+    if (!userStr) {
+      router.push('/login')
+      return
+    }
+    const userObj = JSON.parse(userStr)
+    userid = userObj.id
+
+    // b2. Lấy thông tin sản phẩm từ giỏ
+    const carts =
+      share?.carts && Array.isArray(share.carts) && share.carts.length
+        ? share.carts
+        : cart.value
+
+    if (!carts || !carts.length) {
+      alert('Giỏ hàng đang trống')
+      return
+    }
+
+    // b3. Tính phí ship + VAT + coupon (option – tạm thời chưa có logic coupon)
+    const subtotal = totalCart.value
+    const shipFee = 0 // Free ship theo UI
+    const vat = Math.round(subtotal * 0.1) // 10% VAT
+    const discount = 0 // để sau xử lý coupon
+    const total = subtotal + shipFee + vat - discount
+
+    // b4. Lưu hóa đơn (orders)
+    const orderPayload = {
+      name: orderForm.name,
+      email: orderForm.email,
+      phone: orderForm.phone,
+      address: orderForm.address,
+      note: orderForm.note,
+      userId: userid,
+      status: 'pending',
+      created: new Date().toISOString(),
+      payment: orderForm.payment || 'cod',
+      subtotal,
+      shipFee,
+      vat,
+      discount,
+      total
+    }
+
+    const orderRes = await axios.post(`${API}/orders`, orderPayload)
+
+    if (!(orderRes.status === 201 || orderRes.status === 200)) {
+      alert('Tạo hóa đơn thất bại')
+      return
+    }
+
+    // b5. Lấy id hóa đơn => lưu chi tiết hóa đơn (orderItems)
+    const orderId = orderRes.data.id
+
+    const orderItemsPayload = carts.map(item => {
+      const price = item.product?.price ?? item.price ?? 0
+      const quantity = Number(item.quantity || 0)
+      return {
+        orderId,
+        productId: item.productId || item.product?.id,
+        quantity,
+        price,
+        lineTotal: price * quantity
+      }
+    })
+
+    await Promise.all(
+      orderItemsPayload.map(oi => axios.post(`${API}/orderItems`, oi))
+    )
+
+    // Xoá giỏ hàng sau khi đặt hàng
+    await Promise.all(
+      carts.map(item => axios.delete(`${API}/carts/${item.id}`))
+    )
+
+    if (share && typeof share === 'object') {
+      share.carts = []
+    }
+    cart.value = []
+
+    alert('Đặt hàng thành công!')
+    router.push('/')
+  } catch (error) {
+    console.error('handleSubmit error', error)
+    alert('Có lỗi xảy ra khi đặt hàng')
+  }
+}
 </script>
-<template>
-    <main class="container my-5">
-    <div class="row g-4">
-      <!-- Left: Form -->
-      <div class="col-lg-8">
-        <div class="card shadow-sm mb-4">
-          <div class="card-body">
-            <p class="section-title mb-2">Thông tin liên hệ</p>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Tên</label>
-                <input type="text" class="form-control" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" required />
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Số điện thoại</label>
-                <input type="tel" class="form-control" placeholder="+84..." />
-              </div>
-            </div>
-
-            <hr class="my-4" />
-            <p class="section-title mb-2">Địa chỉ giao hàng</p>
-            <div class="row g-3">
-              <div class="col-12">
-                <label class="form-label">Địa chỉ</label>
-                <input type="text" class="form-control" required />
-              </div>
-              <div class="col-12">
-                <label class="form-label">ghi chú</label>
-                <input type="text" class="form-control" required />
-              </div>
-              <!-- <div class="col-md-6">
-                <label class="form-label">Tỉnh/Thành phố</label>
-                <input type="text" class="form-control" required />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Mã bưu chính</label>
-                <input type="text" class="form-control" required />
-              </div>
-              <div class="col-md-3">
-                <label class="form-label">Quốc gia</label>
-                <select class="form-select" required>
-                  <option value="">Chọn...</option>
-                  <option>Việt Nam</option>
-                  <option>Hoa Kỳ</option>
-                  <option>Anh</option>
-                  <option>Khác</option>
-                </select>
-              </div> -->
-              <div class="col-12">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="same-address" checked />
-                  <label class="form-check-label" for="same-address">
-                    Sử dụng địa chỉ này cho thanh toán
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <p class="section-title mb-2">Phương thức thanh toán</p>
-            <div class="row gy-3">
-              <div class="col-md-4">
-                <div class="form-check border rounded-3 p-3 h-100">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="paymentMethod"
-                    id="zalopay"
-                    checked
-                  />
-                  <label class="form-check-label d-block" for="zalopay">
-                    COD
-                  </label>
-                  <small class="text-muted">Thanh toán khi nhận hàng</small>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-check border rounded-3 p-3 h-100">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="paymentMethod"
-                    id="momo"
-                  />
-                  <label class="form-check-label d-block" for="momo">
-                    MoMo Pay
-                  </label>
-                  <small class="text-muted">Nhập mã đơn hoặc quét QR trên MoMo.</small>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-check border rounded-3 p-3 h-100">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="paymentMethod"
-                    id="vnpay"
-                  />
-                  <label class="form-check-label d-block" for="vnpay">
-                    VNPay
-                  </label>
-                  <small class="text-muted">Hỗ trợ chuyển khoản qua VNPay QR.</small>
-                </div>
-              </div>
-            </div>
-
-            <div class="alert alert-info mt-3" role="alert">
-              Sau khi bấm "Đặt hàng", mã QR tương ứng sẽ hiển thị để bạn quét bằng ví điện tử. Giao dịch an toàn, xác nhận trong vòng 1 phút.
-            </div>
-
-            <div class="row g-3 mt-1">
-              <div class="col-12">
-                <label class="form-label">Ghi chú đơn hàng (tuỳ chọn)</label>
-                <textarea class="form-control" rows="3" placeholder="Ví dụ: giao giờ hành chính, mã thang máy..."></textarea>
-              </div>
-              <div class="col-12 mt-2">
-                <a href="cart.html" class="btn btn-outline-secondary me-2">
-                  ← Quay lại giỏ hàng
-                </a>
-                <button type="submit" class="btn btn-primary">
-                  Đặt hàng
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Order summary -->
-      <div class="col-lg-4">
-        <div class="card shadow-sm mb-3">
-          <div class="card-body">
-            <h2 class="h5 mb-3">Tóm tắt đơn hàng</h2>
-           
-            <ul  v-for="c in share.carts" :key="c.id" class="list-group list-group-flush mb-3">
-              <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>{{ c.product?.name  }}</strong>
-                  <p class="mb-0 small text-muted">{{ c.quantity }}</p>
-                </div>
-                <span>{{ c.product?.price * c.quantity}}</span>
-              </li>
-            </ul>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Tạm tính</span>
-              <span>{{ totalCart }}</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Phí vận chuyển</span>
-              <span>Miễn phí</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span>Thuế</span>
-              <span>{{ Math.round(totalCart*0.1,2) }} đ</span>
-            </div>
-            <div class="input-group my-3">
-              <input type="text" class="form-control" placeholder="Nhập mã giảm giá" />
-              <button class="btn btn-outline-secondary" type="button">Áp dụng</button>
-            </div>
-            <hr />
-            <div class="d-flex justify-content-between fw-bold mb-0">
-              <span>Tổng cộng</span>
-              <span>{{ totalCart + Math.round(totalCart*0.1,2)  }} đ</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h2 class="h6">Cần hỗ trợ?</h2>
-            <p class="text-muted small mb-3">
-              Đội ngũ chăm sóc hoạt động 24/7 để giải đáp mọi thắc mắc giao hàng hoặc thanh toán.
-            </p>
-            <ul class="list-unstyled mb-0 small">
-              <li>• Chat trực tuyến bất kỳ lúc nào</li>
-              <li>• Email: support@simplecart.vn</li>
-              <li>• Hotline: 1900 123 456</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-</template>
-<style scoped>
-.success {
-    color: green;
-}
-</style>

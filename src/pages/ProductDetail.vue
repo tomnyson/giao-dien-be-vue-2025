@@ -16,7 +16,7 @@ const route = useRoute();
 const router =useRouter()
 const productDetail = ref({})
 const productRelated = ref([])
-const quanity = ref(1)
+const quantity = ref(1)
 
 const API = import.meta.env.VITE_API_URL
 
@@ -74,42 +74,76 @@ watchEffect(async() => {
  * b5. luu vao object /carts -> payload o tren
  * 
  */
-const handleAddCart = async (id) => {
-    console.log(id)
-    const user = localStorage.getItem('ketqua')
-    if (!user) {
-       router.push('/login')
-    }
-    else{
-        const userObj = JSON.parse(user)
-        const payload = {
-            productId: id,
-            userId: userObj.id,
-            quantity: 1,
-        }
-        /**
-         * check ton tai san pham
-         */
-    console.log('id',id)
-       const response = await axios.get(`${API}/carts?userId=${userObj.id}&productId=${id}`)
-       if(response.status === 200) {
-        if(response.data.length>0) {
-            // cart product  exsit
-            const idCart = response.data[0].id
-            const responseUpdateCart = await axios.put(`${API}/carts/${idCart}`,{
-                ...response.data[0],
-                quantity: Number(quantity.value) + Number(response.data[0].quantity)
-            })
-            alert('update cart success')
+const handleAddCart = async (productId) => {
+    // b1: lấy id của sản phẩm hiện tại (nhận từ tham số)
+    console.log('productId', productId)
 
-        } else {
-            const responseAddCart = await axios.post(`${API}/carts`,payload)
-            alert('add cart success')
-            // cart product not exist
-        }
-       } 
+    // b2: lấy id người dùng từ localStorage
+    const userStr = localStorage.getItem('ketqua')
+
+    // b3: nếu chưa đăng nhập thì chuyển sang trang đăng nhập
+    if (!userStr) {
+        router.push('/login')
+        return
     }
-    
+
+    const userObj = JSON.parse(userStr)
+
+    // b4: lấy giá trị số lượng, nếu số lượng <= 0 hoặc lớn hơn tồn kho thì báo hết hàng
+    const qty = Number(quantity.value)
+    if (!qty || qty <= 0) {
+        alert('Số lượng không hợp lệ')
+        return
+    }
+
+    if (productDetail.value && typeof productDetail.value.stock === 'number') {
+        if (qty > productDetail.value.stock) {
+            alert('Sản phẩm không đủ số lượng trong kho')
+            return
+        }
+        if (productDetail.value.stock <= 0) {
+            alert('Sản phẩm đã hết hàng')
+            return
+        }
+    }
+
+    // b5: lưu vào object /carts -> payload để gửi lên db.json
+    const payload = {
+        productId: productId,
+        userId: userObj.id,
+        quantity: qty,
+    }
+
+    try {
+        // Kiểm tra đã có cart của user với productId này chưa (db.json: /carts?userId=&productId=)
+        const response = await axios.get(`${API}/carts?userId=${userObj.id}&productId=${productId}`)
+
+        if (response.status === 200) {
+            if (response.data.length > 0) {
+                // Đã tồn tại sản phẩm trong giỏ -> update quantity
+                const currentCart = response.data[0]
+                const idCart = currentCart.id
+
+                const responseUpdateCart = await axios.put(`${API}/carts/${idCart}`, {
+                    ...currentCart,
+                    quantity: Number(currentCart.quantity) + qty,
+                })
+
+                if (responseUpdateCart.status === 200) {
+                    alert('Cập nhật giỏ hàng thành công')
+                }
+            } else {
+                // Chưa có -> tạo mới
+                const responseAddCart = await axios.post(`${API}/carts`, payload)
+                if (responseAddCart.status === 201 || responseAddCart.status === 200) {
+                    alert('Thêm vào giỏ hàng thành công')
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error when add to cart', error)
+        alert('Có lỗi khi thêm vào giỏ hàng')
+    }
 }
 </script>
 <template>
@@ -169,7 +203,7 @@ const handleAddCart = async (id) => {
                             <label for="quantity" class="col-form-label fw-semibold">Quantity</label>
                         </div>
                         <div class="col-auto">
-                            <input type="number" id="quantity" class="form-control" v-model="quanity" min="1" :max="productDetail.stock" />
+                            <input type="number" id="quantity" class="form-control" v-model="quantity" min="1" :max="productDetail.stock" />
                         </div>
                     </div>
 
