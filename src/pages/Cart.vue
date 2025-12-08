@@ -22,7 +22,7 @@ const getcart = async () => {
         const userObj = JSON.parse(user);
         userid = userObj.id;
 
-        const response = await axios.get(`${API}/carts?userId=${userid}&_embed=product&_embed=user`)
+        const response = await axios.get(`${API}/carts?userId=${userid}&_expand=product&_expand=user`)
         if (response.data?.length) {
             cart.value = response.data;
             share.carts = response.data;
@@ -46,8 +46,8 @@ const getcart = async () => {
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 mb-0">Sản phẩm của bạn (2)</h2>
-                            <a href="index.html" class="btn btn-sm btn-outline-secondary">Tiếp tục mua sắm</a>
+                            <h2 class="h5 mb-0">Sản phẩm của bạn ({{ cart.length }})</h2>
+                            <RouterLink to="/products" class="btn btn-sm btn-outline-secondary">Tiếp tục mua sắm</RouterLink>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle">

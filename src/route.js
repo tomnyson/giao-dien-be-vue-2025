@@ -12,11 +12,15 @@ import Products from './pages/Products.vue'
 import ProductDetail from './pages/ProductDetail.vue'
 import Cart from './pages/Cart.vue'
 import Checkout from './pages/Checkout.vue'
+import News from './pages/News.vue'
+import NewsDetail from './pages/NewsDetail.vue'
 
 const routes = [
     { path: '/', name: 'home', component: HomeView, meta: { isLogin: false } },
     { path: '/products', name: 'products', component: Products, meta: { isLogin: false } },
     { path: '/products/:id', name: 'detail', component: ProductDetail, meta: { isLogin: false } },
+    { path: '/news', name: 'news', component: News, meta: { isLogin: false } },
+    { path: '/news/:slug', name: 'newsDetail', component: NewsDetail, meta: { isLogin: false } },
     { path: '/login', name: 'login', component: LoginScreen, meta: { isLogin: false } },
     { path: '/register', name: 'register', component: RegisterScreen, meta: { isLogin: false } },
     { path: '/forgot-password', meta: { isLogin: false }, name: 'forgot', component: ForgotPassword },
@@ -36,17 +40,30 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const user = localStorage.getItem('ketqua')
     if (to.meta.isLogin && !user) {
-        console.log("call login page");
-        next({ name: 'login' });
-    } else {
-        const userParse = JSON.parse(user)
-        /**
-         * check role
-         */
-        if (to.meta.isAdmin && userParse.role != 'admin') {
-            next({ name: 'permissionDenied' });
-        }
-        next();
+        next({ name: 'login' })
+        return
     }
+
+    // If route requires admin, ensure we have a valid user and role
+    if (to.meta.isAdmin) {
+        if (!user) {
+            next({ name: 'login' })
+            return
+        }
+
+        try {
+            const userParse = JSON.parse(user)
+            if (userParse.role !== 'admin') {
+                next({ name: 'permissionDenied' })
+                return
+            }
+        } catch (error) {
+            console.error('Invalid user data', error)
+            next({ name: 'login' })
+            return
+        }
+    }
+
+    next()
 })
 export default router

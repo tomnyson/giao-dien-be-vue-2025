@@ -8,20 +8,20 @@ const user = reactive({
 
 </script>
 <template>
-     <h1>Forgot password</h1>
+     <h1>Quên mật khẩu</h1>
     <form>
         <div class="form-group">
-            <label for="exampleInputEmail1">Username</label>
+            <label for="exampleInputEmail1">Tên đăng nhập</label>
             <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="user.username"
-                placeholder="Enter email">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                placeholder="Nhập email">
+            <small id="emailHelp" class="form-text text-muted">Chúng tôi sẽ không bao giờ chia sẻ email của bạn với người khác.</small>
         </div>
         <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input  type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" v-model="user.password">
+            <label for="exampleInputPassword1">Mật khẩu mới</label>
+            <input  type="password" class="form-control" id="exampleInputPassword1" placeholder="Mật khẩu" v-model="user.password">
         </div>
-        <button type="submit" class="btn btn-primary mb-4">Submit</button> <br/>
-         <span class="success" v-if="user.username ==='admin' && user.password ==='123456'"> login success</span>
+        <button type="submit" class="btn btn-primary mb-4">Khôi phục</button> <br/>
+         <span class="success" v-if="user.username ==='admin' && user.password ==='123456'">Khôi phục thành công</span>
         <span>{{ user.username }}</span> <br/>
          <span>{{ user.password }}</span>
     </form>

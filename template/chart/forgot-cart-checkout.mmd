@@ -1,0 +1,32 @@
+flowchart TD
+    subgraph ForgotPassword[Quên mật khẩu]
+        FP1([Start]) --> FP2[User mở trang Quên mật khẩu]
+        FP2 --> FP3[User nhập email đã đăng ký]
+        FP3 --> FP4[System kiểm tra email tồn tại]
+        FP4 -->|Không| FP5[Thông báo email không tồn tại]
+        FP5 --> FP2
+        FP4 -->|Có| FP6[Gửi email chứa link đặt lại mật khẩu]
+        FP6 --> FP7[User mở link và đặt mật khẩu mới]
+        FP7 --> FP8[Cập nhật mật khẩu trong hệ thống]
+        FP8 --> FP9([End])
+    end
+
+    subgraph CartCheckout[Giỏ hàng -> Đơn hàng -> Thanh toán]
+        C1([Start]) --> C2[User duyệt sản phẩm]
+        C2 --> C3{Thêm vào giỏ?}
+        C3 -->|Không| C2
+        C3 -->|Có| C4[Giỏ hàng cập nhật]
+        C4 --> C5[User xem giỏ hàng]
+        C5 --> C6{Chỉnh sửa giỏ?}
+        C6 -->|Cập nhật SL/Xóa| C4
+        C6 -->|Tiếp tục| C7[User nhấn Checkout]
+        C7 --> C8[Nhập thông tin giao hàng & thanh toán]
+        C8 --> C9{Thanh toán thành công?}
+        C9 -->|Không| C10[Hiển thị lỗi / chọn phương thức khác]
+        C10 --> C8
+        C9 -->|Có| C11[Tạo đơn hàng & lưu chi tiết]
+        C11 --> C12[Gửi email/xác nhận đơn]
+        C12 --> C13([End])
+    end
+
+    FP9 -.-> C1

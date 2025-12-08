@@ -1,0 +1,27 @@
+flowchart TD
+    A([Start]) --> B[User mở trang Đăng nhập]
+    B --> C[User nhập Email + Mật khẩu<br/>chọn Remember me (nếu có)]
+    C --> D[User nhấn nút Đăng nhập]
+    D --> E[System kiểm tra dữ liệu nhập]
+
+    E --> F{Thiếu/không hợp lệ?}
+    F -- Có --> G[Hiển thị lỗi form<br/>Yêu cầu nhập lại]
+    G --> C
+
+    F -- Không --> H[System tìm tài khoản theo Email]
+    H --> I{Tài khoản tồn tại?}
+    I -- Không --> J[Thông báo<br/>'Email chưa đăng ký']
+    J --> C
+
+    I -- Có --> K{Tài khoản bị khóa?}
+    K -- Có --> L[Thông báo tài khoản bị khóa]
+    L --> M([End])
+
+    K -- Không --> N[So khớp mật khẩu]
+    N --> O{Mật khẩu đúng?}
+    O -- Không --> P[Thông báo<br/>'Sai mật khẩu']
+    P --> C
+
+    O -- Có --> Q[Tạo session/token<br/>Lưu remember me nếu chọn]
+    Q --> R[Chuyển trang (Home/Admin...)<br/>Đăng nhập thành công]
+    R --> S([End])

@@ -1,0 +1,16 @@
+flowchart TD
+    C1([Start]) --> C2[User duyet san pham]
+    C2 --> C3{Them vao gio?}
+    C3 -->|Khong| C2
+    C3 -->|Co| C4[Gio hang duoc cap nhat]
+    C4 --> C5[User xem gio hang]
+    C5 --> C6{Chinh sua gio?}
+    C6 -->|Cap nhat SL hoac xoa| C4
+    C6 -->|Tiep tuc| C7[User nhan Checkout]
+    C7 --> C8[Nhap thong tin giao hang va thanh toan]
+    C8 --> C9{Thanh toan thanh cong?}
+    C9 -->|Khong| C10[Hien thi loi hoac chon phuong thuc khac]
+    C10 --> C8
+    C9 -->|Co| C11[Tao don hang va luu chi tiet]
+    C11 --> C12[Gui email hoac xac nhan don]
+    C12 --> C13([End])

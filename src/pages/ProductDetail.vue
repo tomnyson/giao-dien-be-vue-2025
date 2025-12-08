@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watchEffect } from 'vue'
+import { computed, reactive, ref, watchEffect } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 const user = reactive({
@@ -17,6 +17,7 @@ const router =useRouter()
 const productDetail = ref({})
 const productRelated = ref([])
 const quantity = ref(1)
+const reviews = ref([])
 
 const API = import.meta.env.VITE_API_URL
 
@@ -30,6 +31,18 @@ const loadProductDetail = async (id) => {
         }
     } catch (error) {
         throw error
+    }
+}
+
+const loadReviews = async (productId) => {
+    try {
+        const res = await axios.get(`${API}/orderItems?productId=${productId}`)
+        if (res.status === 200) {
+            reviews.value = (res.data || []).filter(r => Number(r.rating) > 0 || (r.comment && r.comment.trim()))
+        }
+    } catch (error) {
+        console.error('Load reviews error', error)
+        reviews.value = []
     }
 }
 
@@ -48,6 +61,17 @@ const loadProductRelative = async () => {
     }
 }
 
+const averageRating = computed(() => {
+    if (!reviews.value.length) return 0
+    const total = reviews.value.reduce((sum, r) => sum + Number(r.rating || 0), 0)
+    return (total / reviews.value.length).toFixed(1)
+})
+
+const formatStars = (rating) => {
+    const r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)))
+    return '★'.repeat(r) + '☆'.repeat(5 - r)
+}
+
 // onMounted(async()=> {
 //     const {id} = route.params
 //     if(!id) {
@@ -64,6 +88,7 @@ watchEffect(async() => {
     }
    await loadProductDetail(id)
    await loadProductRelative(id)
+   await loadReviews(id)
 })
 /** 
  * thêm
@@ -170,7 +195,7 @@ const handleAddCart = async (productId) => {
                 <h1 class="h3 mb-2">{{ productDetail.name }}</h1>
                 <p class="text-muted mb-1">{{ productDetail.id }}</p>
                 <div class="d-flex align-items-center mb-3">
-                    quantity: (<strong>{{ productDetail.stock }}</strong>   )
+                    Còn lại: (<strong>{{ productDetail.stock }}</strong>)
                 </div>
 
                 <div class="mb-3">
@@ -200,7 +225,7 @@ const handleAddCart = async (productId) => {
                 <form class="mt-4" @submit.prevent="handleAddCart(productDetail.id)">
                     <div class="row g-3 align-items-center mb-3">
                         <div class="col-auto">
-                            <label for="quantity" class="col-form-label fw-semibold">Quantity</label>
+                            <label for="quantity" class="col-form-label fw-semibold">Số lượng</label>
                         </div>
                         <div class="col-auto">
                             <input type="number" id="quantity" class="form-control" v-model="quantity" min="1" :max="productDetail.stock" />
@@ -244,7 +269,7 @@ const handleAddCart = async (productId) => {
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="spec-tab" data-bs-toggle="tab" data-bs-target="#spec"
+                        <button class="nav-link" id="spec-tab" data-bs-toggle="tab" data-bs-target="#spec"
                                 type="button" role="tab">
                                 Thông số
                             </button>
@@ -252,7 +277,7 @@ const handleAddCart = async (productId) => {
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review"
                                 type="button" role="tab">
-                                Đánh giá
+                                Đánh giá ({{ reviews.length }})
                             </button>
                         </li>
                     </ul>
@@ -274,19 +299,23 @@ const handleAddCart = async (productId) => {
                             </ul>
                         </div>
                         <div class="tab-pane fade" id="review" role="tabpanel">
-                            <div class="mb-3">
-                                <strong>Lan Nguyễn</strong>
-                                <p class="mb-1 text-warning">★★★★★</p>
-                                <p class="text-muted">
-                                    Âm thanh mạnh mẽ so với kích thước, pin trụ cả chuyến đi Vũng Tàu.
-                                </p>
+                            <div v-if="reviews.length" class="d-flex align-items-center mb-3 gap-2">
+                                <span class="fw-semibold h5 mb-0">Đánh giá trung bình:</span>
+                                <span class="text-warning fw-bold">{{ formatStars(averageRating) }}</span>
+                                <span class="text-muted small">({{ averageRating }}/5 · {{ reviews.length }} đánh giá)</span>
                             </div>
-                            <div>
-                                <strong>Minh Trần</strong>
-                                <p class="mb-1 text-warning">★★★★☆</p>
-                                <p class="text-muted">
-                                    Thiết kế đẹp, ghép nối nhanh. Ước gì có chế độ bass mạnh hơn nữa.
-                                </p>
+                            <div v-if="reviews.length" class="list-group list-group-flush">
+                                <div v-for="review in reviews" :key="review.id" class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="fw-semibold">{{ review.userName || 'Người dùng' }}</div>
+                                        <div class="text-warning small">{{ formatStars(review.rating) }}</div>
+                                    </div>
+                                    <p class="text-muted small mb-1">SL: {{ review.quantity || 1 }}</p>
+                                    <p class="mb-0">{{ review.comment || 'Không có nội dung.' }}</p>
+                                </div>
+                            </div>
+                            <div v-else class="text-secondary small">
+                                Chưa có đánh giá cho sản phẩm này.
                             </div>
                         </div>
                     </div>

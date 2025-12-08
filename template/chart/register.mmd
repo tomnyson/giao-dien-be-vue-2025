@@ -1,0 +1,43 @@
+flowchart TD
+    A([Start]) --> B[User mở trang Đăng ký]
+
+    B --> C[Chọn phương thức đăng ký]
+    C -->|Email/Username + Password| F1[User nhập Email/Username + Mật khẩu + Xác nhận]
+    C -->|Google| G1[User chọn Google SSO]
+    C -->|Facebook| FB1[User chọn Facebook SSO]
+
+    %% Email/Username flow
+    F1 --> F2[User nhấn nút Đăng ký]
+    F2 --> F3[System kiểm tra dữ liệu]
+    F3 --> F4{Dữ liệu hợp lệ?}
+    F4 -->|Không| F5[Hiển thị lỗi<br/>VD: thiếu thông tin, mật khẩu không trùng]
+    F5 --> F1
+    F4 -->|Có| F6{Email/Username đã tồn tại?}
+    F6 -->|Có| F7[Hiển thị thông báo<br/>Email/Username đã được sử dụng]
+    F7 --> F1
+    F6 -->|Không| F8[Tạo tài khoản mới (local)]
+    F8 --> F9[Gửi email xác thực nếu cần]
+    F9 --> F10[Hiển thị thông báo đăng ký thành công]
+    F10 --> Z([End])
+
+    %% Google SSO
+    G1 --> G2[Google OAuth consent]
+    G2 --> G3{Authorize thành công?}
+    G3 -->|Không| G4[Thông báo thất bại] --> C
+    G3 -->|Có| G5[Lấy profile từ Google]
+    G5 --> G6{Tài khoản Google đã liên kết?}
+    G6 -->|Có| G7[Đăng ký/đăng nhập hoàn tất]
+    G6 -->|Không| G8[Tạo tài khoản mới & liên kết Google]
+    G7 --> Z
+    G8 --> Z
+
+    %% Facebook SSO
+    FB1 --> FB2[Facebook OAuth consent]
+    FB2 --> FB3{Authorize thành công?}
+    FB3 -->|Không| FB4[Thông báo thất bại] --> C
+    FB3 -->|Có| FB5[Lấy profile từ Facebook]
+    FB5 --> FB6{Tài khoản Facebook đã liên kết?}
+    FB6 -->|Có| FB7[Đăng ký/đăng nhập hoàn tất]
+    FB6 -->|Không| FB8[Tạo tài khoản mới & liên kết Facebook]
+    FB7 --> Z
+    FB8 --> Z
